@@ -12,7 +12,7 @@
     See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
 
 -->
-[![DepShield Badge](https://depshield.sonatype.org/badges/owner/repository/depshield.svg)](https://depshield.github.io)
+[![DepShield Badge](https://depshield.sonatype.org/badges/sonatype-nexus-community/hazelcast-swarm/depshield.svg)](https://depshield.github.io)
 # Table of Contents
 
 * [Requirements](#requirements)
