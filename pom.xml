@@ -23,7 +23,7 @@
     <version>13</version>
   </parent>
 
-  <groupId>org.sonatype.nexus</groupId>
+  <groupId>org.sonatype.hazelcast</groupId>
   <artifactId>hazelcast-swarm</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>bundle</packaging>

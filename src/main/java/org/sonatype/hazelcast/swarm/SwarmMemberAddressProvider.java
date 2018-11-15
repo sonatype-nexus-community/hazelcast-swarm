@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.nexus.hazelcast.swarm;
+package org.sonatype.hazelcast.swarm;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -26,9 +26,7 @@ import com.hazelcast.spi.MemberAddressProvider;
 
 import static java.util.Collections.list;
 import static java.util.stream.Collectors.toSet;
-import static org.sonatype.nexus.hazelcast.swarm.SwarmProperties.SERVICE_NAME;
-import static org.sonatype.nexus.hazelcast.swarm.SwarmProperties.SERVICE_PORT;
-import static org.sonatype.nexus.hazelcast.swarm.SwarmUtil.resolveServiceName;
+import static org.sonatype.hazelcast.swarm.SwarmUtil.resolveServiceName;
 
 public class SwarmMemberAddressProvider
     implements MemberAddressProvider
@@ -41,8 +39,8 @@ public class SwarmMemberAddressProvider
 
   public SwarmMemberAddressProvider(final Properties properties) {
     Objects.requireNonNull(properties);
-    String serviceName = properties.getProperty(SERVICE_NAME.key(), "localhost");
-    int servicePort = Integer.parseInt(properties.getProperty(SERVICE_PORT.key(), "0"));
+    String serviceName = properties.getProperty(SwarmProperties.SERVICE_NAME.key(), "localhost");
+    int servicePort = Integer.parseInt(properties.getProperty(SwarmProperties.SERVICE_PORT.key(), "0"));
 
     Set<InetAddress> potentialInetAddresses = resolveServiceName(serviceName, logger).collect(toSet());
 

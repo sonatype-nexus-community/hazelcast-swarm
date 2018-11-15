@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.nexus.hazelcast.swarm;
+package org.sonatype.hazelcast.swarm;
 
 import java.util.Map;
 
@@ -21,7 +21,7 @@ import com.hazelcast.spi.discovery.DiscoveryNode;
 import com.hazelcast.spi.discovery.SimpleDiscoveryNode;
 
 import static java.util.stream.Collectors.toSet;
-import static org.sonatype.nexus.hazelcast.swarm.SwarmUtil.resolveServiceName;
+import static org.sonatype.hazelcast.swarm.SwarmUtil.resolveServiceName;
 
 public class SwarmDiscoveryStrategy
     extends AbstractDiscoveryStrategy
