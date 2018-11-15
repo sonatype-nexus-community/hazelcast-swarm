@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2018-present Sonatype, Inc. All rights reserved.
+
+    This program is licensed to you under the Apache License Version 2.0,
+    and you may not use this file except in compliance with the Apache License Version 2.0.
+    You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the Apache License Version 2.0 is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
+
+-->
+<hazelcast xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.10.xsd"
+           xmlns="http://www.hazelcast.com/schema/config">
+
+  <properties>
+    <property name="hazelcast.discovery.enabled">true</property>
+  </properties>
+
+  <network>
+    <port auto-increment="false">5701</port>
+    <member-address-provider enabled="true">
+      <class-name>org.sonatype.hazelcast.swarm.SwarmMemberAddressProvider</class-name>
+      <properties>
+        <property name="service-name">nxrm</property>
+      </properties>
+    </member-address-provider>
+    <join>
+      <multicast enabled="false"/>
+      <aws enabled="false"/>
+      <tcp-ip enabled="false"/>
+
+      <discovery-strategies>
+        <discovery-strategy
+            enabled="true"
+            class="org.sonatype.hazelcast.swarm.SwarmDiscoveryStrategy">
+          <properties>
+            <property name="service-name">nxrm</property>
+            <property name="service-port">5701</property>
+          </properties>
+        </discovery-strategy>
+      </discovery-strategies>
+    </join>
+  </network>
+
+</hazelcast>

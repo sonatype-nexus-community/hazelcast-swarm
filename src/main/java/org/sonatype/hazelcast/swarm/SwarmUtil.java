@@ -13,17 +13,18 @@
 package org.sonatype.hazelcast.swarm;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.stream.Stream;
 
 import com.hazelcast.logging.ILogger;
 
 import static java.util.Arrays.stream;
+import static java.util.Collections.list;
 
-public class SwarmUtil {
-  private SwarmUtil() { }
-
-  static Stream<InetAddress> resolveServiceName(final String serviceName, final ILogger logger) {
+class SwarmUtil {
+  Stream<InetAddress> resolveServiceName(final String serviceName, final ILogger logger) {
     try {
       return stream(InetAddress.getAllByName(serviceName));
     }
@@ -31,5 +32,10 @@ public class SwarmUtil {
       logger.severe("Unable to resolve service name: " + serviceName);
       return Stream.empty();
     }
+  }
+
+  Stream<InetAddress> getAvailableAddresses() throws SocketException {
+    return list(NetworkInterface.getNetworkInterfaces()).stream()
+        .flatMap(i -> list(i.getInetAddresses()).stream());
   }
 }

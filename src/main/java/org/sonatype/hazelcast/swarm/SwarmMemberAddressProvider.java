@@ -14,7 +14,6 @@ package org.sonatype.hazelcast.swarm;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Objects;
 import java.util.Properties;
@@ -24,29 +23,38 @@ import com.hazelcast.logging.ILogger;
 import com.hazelcast.logging.Logger;
 import com.hazelcast.spi.MemberAddressProvider;
 
-import static java.util.Collections.list;
 import static java.util.stream.Collectors.toSet;
-import static org.sonatype.hazelcast.swarm.SwarmUtil.resolveServiceName;
+import static org.sonatype.hazelcast.swarm.SwarmProperties.SERVICE_NAME;
+import static org.sonatype.hazelcast.swarm.SwarmProperties.SERVICE_PORT;
 
 public class SwarmMemberAddressProvider
     implements MemberAddressProvider
 {
   private static final ILogger logger = Logger.getLogger(SwarmMemberAddressProvider.class);
 
-  private Properties properties;
+  private final SwarmUtil swarmUtil;
 
   private InetSocketAddress bindAddress;
 
   public SwarmMemberAddressProvider(final Properties properties) {
-    Objects.requireNonNull(properties);
-    String serviceName = properties.getProperty(SwarmProperties.SERVICE_NAME.key(), "localhost");
-    int servicePort = Integer.parseInt(properties.getProperty(SwarmProperties.SERVICE_PORT.key(), "0"));
+    this(properties, new SwarmUtil());
+  }
 
-    Set<InetAddress> potentialInetAddresses = resolveServiceName(serviceName, logger).collect(toSet());
+  // available for testing
+  SwarmMemberAddressProvider(final Properties properties, final SwarmUtil swarmUtil) {
+    this.swarmUtil = swarmUtil;
+    init(properties);
+  }
+
+  private void init(final Properties properties) {
+    Objects.requireNonNull(properties);
+    String serviceName = properties.getProperty(SERVICE_NAME.getDefinition().key(), "localhost");
+    int servicePort = Integer.parseInt(properties.getProperty(SERVICE_PORT.getDefinition().key(), "0"));
+
+    Set<InetAddress> potentialInetAddresses = swarmUtil.resolveServiceName(serviceName, logger).collect(toSet());
 
     try {
-      InetAddress address = list(NetworkInterface.getNetworkInterfaces()).stream()
-          .flatMap(i -> list(i.getInetAddresses()).stream())
+      InetAddress address = swarmUtil.getAvailableAddresses()
           .filter(potentialInetAddresses::contains)
           .findFirst()
           .orElse(null);
@@ -64,6 +72,6 @@ public class SwarmMemberAddressProvider
 
   @Override
   public InetSocketAddress getPublicAddress() {
-    return bindAddress;
+    return getBindAddress();
   }
 }
