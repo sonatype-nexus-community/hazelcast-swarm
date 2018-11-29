@@ -12,8 +12,10 @@
  */
 package org.sonatype.hazelcast.swarm;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.hazelcast.config.properties.PropertyDefinition;
 import com.hazelcast.logging.ILogger;
@@ -21,17 +23,9 @@ import com.hazelcast.spi.discovery.DiscoveryNode;
 import com.hazelcast.spi.discovery.DiscoveryStrategy;
 import com.hazelcast.spi.discovery.DiscoveryStrategyFactory;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableCollection;
-
 public class SwarmDiscoveryStrategyFactory
     implements DiscoveryStrategyFactory
 {
-  private static final Collection<PropertyDefinition> PROPERTY_DEFINITIONS = unmodifiableCollection(asList(
-      SwarmProperties.SERVICE_NAME,
-      SwarmProperties.SERVICE_PORT
-  ));
-
   @Override
   public Class<? extends DiscoveryStrategy> getDiscoveryStrategyType() {
     return SwarmDiscoveryStrategy.class;
@@ -42,11 +36,13 @@ public class SwarmDiscoveryStrategyFactory
                                                 final ILogger logger,
                                                 final Map<String, Comparable> properties)
   {
-    return new SwarmDiscoveryStrategy(logger, properties);
+    return new SwarmDiscoveryStrategy(properties);
   }
 
   @Override
   public Collection<PropertyDefinition> getConfigurationProperties() {
-    return PROPERTY_DEFINITIONS;
+    return Arrays.stream(SwarmProperties.values())
+        .map(SwarmProperties::getDefinition)
+        .collect(Collectors.toSet());
   }
 }

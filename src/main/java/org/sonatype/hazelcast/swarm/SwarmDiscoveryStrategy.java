@@ -15,30 +15,42 @@ package org.sonatype.hazelcast.swarm;
 import java.util.Map;
 
 import com.hazelcast.logging.ILogger;
+import com.hazelcast.logging.Logger;
 import com.hazelcast.nio.Address;
 import com.hazelcast.spi.discovery.AbstractDiscoveryStrategy;
 import com.hazelcast.spi.discovery.DiscoveryNode;
 import com.hazelcast.spi.discovery.SimpleDiscoveryNode;
 
 import static java.util.stream.Collectors.toSet;
-import static org.sonatype.hazelcast.swarm.SwarmUtil.resolveServiceName;
+import static org.sonatype.hazelcast.swarm.SwarmProperties.SERVICE_NAME;
+import static org.sonatype.hazelcast.swarm.SwarmProperties.SERVICE_PORT;
 
 public class SwarmDiscoveryStrategy
     extends AbstractDiscoveryStrategy
 {
+  private static final ILogger LOGGER = Logger.getLogger(SwarmDiscoveryStrategy.class);
+
+  private final SwarmUtil swarmUtil;
+
   private final String serviceName;
 
   private final int servicePort;
 
-  public SwarmDiscoveryStrategy(final ILogger logger, final Map<String, Comparable> properties) {
-    super(logger, properties);
-    serviceName = getOrDefault(SwarmProperties.SERVICE_NAME, "localhost");
-    servicePort = getOrDefault(SwarmProperties.SERVICE_PORT, 5701);
+  public SwarmDiscoveryStrategy(final Map<String, Comparable> properties) {
+    this(properties, new SwarmUtil());
+  }
+
+  // available for testing
+  SwarmDiscoveryStrategy(final Map<String, Comparable> properties, final SwarmUtil swarmUtil) {
+    super(LOGGER, properties);
+    this.swarmUtil = swarmUtil;
+    this.serviceName = getOrDefault(SERVICE_NAME.getDefinition(), "localhost");
+    this.servicePort = getOrDefault(SERVICE_PORT.getDefinition(), 5701);
   }
 
   @Override
   public Iterable<DiscoveryNode> discoverNodes() {
-    return resolveServiceName(serviceName, getLogger())
+    return swarmUtil.resolveServiceName(serviceName, getLogger())
         .map(a -> new Address(a, servicePort))
         .map(SimpleDiscoveryNode::new)
         .collect(toSet());

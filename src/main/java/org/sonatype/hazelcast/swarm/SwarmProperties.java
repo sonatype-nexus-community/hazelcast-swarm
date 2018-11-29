@@ -13,16 +13,23 @@
 package org.sonatype.hazelcast.swarm;
 
 import com.hazelcast.config.properties.PropertyDefinition;
+import com.hazelcast.config.properties.PropertyTypeConverter;
 import com.hazelcast.config.properties.SimplePropertyDefinition;
 
 import static com.hazelcast.config.properties.PropertyTypeConverter.INTEGER;
 import static com.hazelcast.config.properties.PropertyTypeConverter.STRING;
 
-public class SwarmProperties {
-  public static final PropertyDefinition SERVICE_NAME =  new SimplePropertyDefinition("service-name", STRING);
+public enum SwarmProperties {
+  SERVICE_NAME("service-name", STRING),
+  SERVICE_PORT("service-port", INTEGER);
 
-  public static final PropertyDefinition SERVICE_PORT =  new SimplePropertyDefinition("service-port", INTEGER);
+  private final PropertyDefinition propertyDefinition;
 
-  private SwarmProperties() {
+  SwarmProperties(final String key, final PropertyTypeConverter typeConverter) {
+    this.propertyDefinition = new SimplePropertyDefinition(key, typeConverter);
+  }
+
+  public PropertyDefinition getDefinition() {
+    return propertyDefinition;
   }
 }
