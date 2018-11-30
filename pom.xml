@@ -25,7 +25,7 @@
 
   <groupId>org.sonatype.hazelcast</groupId>
   <artifactId>hazelcast-swarm</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.1</version>
   <packaging>bundle</packaging>
 
   <inceptionYear>2018</inceptionYear>
